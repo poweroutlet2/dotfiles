@@ -2,32 +2,58 @@ export PATH="$HOME/.local/bin:$PATH"
 export PATH=$PATH:/usr/local/bin
 
 # zsh 
-autoload -U compinit; compinit # completions
-HISTFILE=~/.zsh_history
-HISTSIZE=1000000
-SAVEHIST=1000000
-HIST_STAMPS="yyyy-mm-dd"
-setopt appendhistory
-setopt EXTENDED_HISTORY          # Write timestamps to history
-setopt INC_APPEND_HISTORY        # Write immediately, not on shell exit
-setopt SHARE_HISTORY             # Share history between all sessions
-setopt HIST_IGNORE_DUPS          # Don't record duplicate commands
-setopt HIST_IGNORE_ALL_DUPS      # Delete old duplicates
-setopt HIST_IGNORE_SPACE         # Don't record commands starting with space
-setopt HIST_SAVE_NO_DUPS         # Don't write duplicates to file
-setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks
-setopt HIST_VERIFY               # Don't execute immediately on history expansion
-bindkey '^[[A' history-search-backward
-bindkey '^[[B' history-search-forward
-bindkey '^[OA' history-search-backward
-bindkey '^[OB' history-search-forward
+export ZDOTDIR="${ZDOTDIR:-$HOME}"
+export HISTFILE="$ZDOTDIR/.zsh_history"
+export HISTSIZE=100000
+export SAVEHIST=100000
+setopt inc_append_history share_history extended_history hist_ignore_all_dups hist_reduce_blanks
+setopt autocd correct nocaseglob interactivecomments
+
+# cached completions
+autoload -Uz compinit
+zmodload zsh/complist
+if [[ ! -f "$ZDOTDIR/.zcompdump" || "$HOME/.zshrc" -nt "$ZDOTDIR/.zcompdump" ]]; then
+compinit -i
+else
+compinit -C
+fi
+
+
+command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"
+command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
+
+
+# Antidote setup
+if [[ ! -d "$HOME/.antidote" ]]; then
+git clone --depth=1 https://github.com/mattmc3/antidote "$HOME/.antidote" >/dev/null 2>&1
+fi
+source "$HOME/.antidote/antidote.zsh"
+
+# Antidote plugins setup
+ZPLUG="$ZDOTDIR/.zsh_plugins.txt"
+if [[ ! -f "$ZPLUG" ]]; then
+cat >"$ZPLUG" <<'PLUGS'
+zsh-users/zsh-completions
+zsh-users/zsh-autosuggestions
+Aloxaf/fzf-tab
+zsh-users/zsh-syntax-highlighting
+PLUGS
+fi
+
+# Antidote load plugins
+antidote load "$ZPLUG"
+
+zstyle ':completion:' menu select
+zstyle ':fzf-tab:' switch-group ',' '.'
+
+
+# Keybindings
+bindkey -e
 bindkey "^[[1;5C" forward-word # CTRL arrow left
 bindkey "^[[1;5D" backward-word # CTRL arrow right 
 
-# oh my posh
-export ZSH="$HOME/.oh-my-zsh"
-eval "$(oh-my-posh init zsh)"
 
+## Tools setup  stuff
 # uv
 eval "$(uv generate-shell-completion zsh)"
 
@@ -39,8 +65,9 @@ export NVM_DIR="$HOME/.nvm"
 # pnpm
 export PNPM_HOME="$HOME/.local/share/pnpm"
 export PATH="$PNPM_HOME:$PATH"
-
 eval "$(uv generate-shell-completion zsh)"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion.d/nvm" ] && \. "$NVM_DIR/bash_completion.d/nvm"
+
+
