@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 export PATH="$HOME/.local/bin:$PATH"
 export PATH=$PATH:/usr/local/bin
 
@@ -19,7 +26,6 @@ compinit -C
 fi
 
 
-command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"
 command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
 
 
@@ -35,6 +41,7 @@ if [[ ! -f "$ZPLUG" ]]; then
 cat >"$ZPLUG" <<'PLUGS'
 zsh-users/zsh-completions
 zsh-users/zsh-autosuggestions
+zsh-users/zsh-history-substring-search
 Aloxaf/fzf-tab
 zsh-users/zsh-syntax-highlighting
 PLUGS
@@ -50,7 +57,11 @@ zstyle ':fzf-tab:' switch-group ',' '.'
 # Keybindings
 bindkey -e
 bindkey "^[[1;5C" forward-word # CTRL arrow left
-bindkey "^[[1;5D" backward-word # CTRL arrow right 
+bindkey "^[[1;5D" backward-word # CTRL arrow right
+
+# History substring search keybindings
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down 
 
 
 ## Tools setup  stuff
@@ -65,9 +76,12 @@ export NVM_DIR="$HOME/.nvm"
 # pnpm
 export PNPM_HOME="$HOME/.local/share/pnpm"
 export PATH="$PNPM_HOME:$PATH"
-eval "$(uv generate-shell-completion zsh)"
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion.d/nvm" ] && \. "$NVM_DIR/bash_completion.d/nvm"
+# bun completions
+[ -s "/home/harsh/.bun/_bun" ] && source "/home/harsh/.bun/_bun"
 
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
 
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
