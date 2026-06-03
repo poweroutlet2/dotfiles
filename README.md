@@ -27,7 +27,7 @@ On a fresh system:
 
 ```bash
 # Clone the repo
-git clone https://github.com/harshp2015/dotfiles.git ~/code/dotfiles
+git clone https://github.com/poweroutlet2/dotfiles.git ~/code/dotfiles
 
 # Run the install script
 cd ~/code/dotfiles
