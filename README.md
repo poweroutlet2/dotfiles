@@ -39,6 +39,33 @@ Then:
 2. Log out and back in for Zsh to become your default shell
 3. Restart your terminal
 
+## Claude Code
+
+Custom Claude Code config is stored in `.claude/`:
+
+- **`statusline.sh`** — Custom statusline showing git branch and context window usage
+
+### Agents
+
+#### Web Agents (require [Exa MCP](https://exa.ai/mcp))
+
+- **`agents/web-research.md`** — Multi-step web research agent
+- **`agents/web-searcher.md`** — Quick web search agent
+
+#### Documentation Agent (requires [Openground MCP](https://www.openground.ai/))
+
+- **`agents/openground-docs-search.md`** — Official documentation search agent
+
+### Setup
+
+To set up on a new machine, copy the files into `~/.claude/`:
+
+```bash
+cp .claude/statusline.sh ~/.claude/statusline.sh
+mkdir -p ~/.claude/agents
+cp .claude/agents/*.md ~/.claude/agents/
+```
+
 ## Updating
 
 Pull the latest changes and re-run the install script:
